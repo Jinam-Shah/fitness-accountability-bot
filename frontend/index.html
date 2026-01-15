@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPro - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .plan-selector {
+            display: grid;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .plan-card {
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .plan-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .plan-card.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .plan-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .plan-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .plan-meta {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 FitPro</h1>
+            <p>Professional Fitness Platform</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">Login</div>
+            <div class="tab" onclick="switchTab('register')">Register</div>
+        </div>
+        
+        <div class="form-container">
+            <!-- Login Form -->
+            <div id="login-form" class="form-section active">
+                <div id="login-error" class="error hidden"></div>
+                
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="login-email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="Enter password" required>
+                    </div>
+                    
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="register-form" class="form-section">
+                <div id="register-error" class="error hidden"></div>
+                
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="reg-fullname" placeholder="John Doe" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="reg-email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="reg-username" placeholder="johndoe" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="reg-password" placeholder="Min 6 characters" required minlength="6">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="reg-age" placeholder="25" required min="13" max="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select id="reg-gender" required>
+                                <option value="">Select</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Height (cm)</label>
+                            <input type="number" id="reg-height" placeholder="170" required min="100" max="250">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" id="reg-weight" placeholder="70" required min="30" max="300" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fitness Level</label>
+                        <select id="reg-fitness-level" required onchange="loadPlans()">
+                            <option value="">Select your level</option>
+                            <option value="beginner">Beginner - New to fitness</option>
+                            <option value="intermediate">Intermediate - Regular workouts</option>
+                            <option value="advanced">Advanced - Experienced athlete</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fitness Goal</label>
+                        <select id="reg-goal" required onchange="loadPlans()">
+                            <option value="">Select your goal</option>
+                            <option value="weight_loss">Weight Loss</option>
+                            <option value="muscle_gain">Muscle Gain</option>
+                            <option value="endurance">Endurance</option>
+                            <option value="general_fitness">General Fitness</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Choose Your Workout Plan</label>
+                        <div id="plan-selector" class="plan-selector">
+                            <div class="loading">Select fitness level and goal to see available plans</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Target Weight (kg) - Optional</label>
+                        <input type="number" id="reg-target-weight" placeholder="65" min="30" max="300" step="0.1">
+                    </div>
+                    
+                    <button type="submit">Create Account & Start Training</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+        let selectedPlanId = null;
+        let availablePlans = [];
+        
+        // Load available plans on page load
+        async function loadAllPlans() {
+            try {
+                const response = await fetch(`${API_URL}/plans/available`);
+                const data = await response.json();
+                availablePlans = data.plans;
+            } catch (error) {
+                console.error('Error loading plans:', error);
+            }
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+            document.getElementById(tab + '-form').classList.add('active');
+            
+            document.querySelectorAll('.error').forEach(e => e.classList.add('hidden'));
+        }
+        
+        function loadPlans() {
+            const level = document.getElementById('reg-fitness-level').value;
+            const goal = document.getElementById('reg-goal').value;
+            
+            if (!level || !goal) return;
+            
+            const planSelector = document.getElementById('plan-selector');
+            
+            // Filter plans
+            let filteredPlans = availablePlans.filter(plan => {
+                return plan.level === level || plan.goal === goal;
+            });
+            
+            if (filteredPlans.length === 0) {
+                filteredPlans = availablePlans.slice(0, 3);
+            }
+            
+            planSelector.innerHTML = filteredPlans.map(plan => `
+                <div class="plan-card" onclick="selectPlan('${plan.id}')">
+                    <div class="plan-name">${plan.name}</div>
+                    <div class="plan-description">${plan.description}</div>
+                    <div class="plan-meta">
+                        Level: ${plan.level} | ${plan.days_per_week} days/week | ${plan.duration_weeks} weeks
+                    </div>
+                </div>
+            `).join('');
+            
+            // Auto-select first plan
+            if (filteredPlans.length > 0) {
+                selectPlan(filteredPlans[0].id);
+            }
+        }
+        
+        function selectPlan(planId) {
+            selectedPlanId = planId;
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.plan-card').classList.add('selected');
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showError('login-error', data.detail || 'Login failed');
+                }
+            } catch (error) {
+                showError('login-error', 'Cannot connect to server. Make sure API is running!');
+            }
+        }
+        
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const userData = {
+                full_name: document.getElementById('reg-fullname').value,
+                email: document.getElementById('reg-email').value,
+                username: document.getElementById('reg-username').value,
+                password: document.getElementById('reg-password').value,
+                age: parseInt(document.getElementById('reg-age').value),
+                gender: document.getElementById('reg-gender').value,
+                height_cm: parseFloat(document.getElementById('reg-height').value),
+                weight_kg: parseFloat(document.getElementById('reg-weight').value),
+                fitness_level: document.getElementById('reg-fitness-level').value,
+                fitness_goal: document.getElementById('reg-goal').value,
+                target_weight_kg: document.getElementById('reg-target-weight').value ? 
+                    parseFloat(document.getElementById('reg-target-weight').value) : null,
+                selected_plan: selectedPlanId
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showError('register-error', data.detail || 'Registration failed');
+                }
+            } catch (error) {
+                showError('register-error', 'Cannot connect to server. Make sure API is running!');
+            }
+        }
+        
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+        
+        // Load plans on page load
+        loadAllPlans();
+    </script>
+</body>
+</html>
