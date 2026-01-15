@@ -78,6 +78,6 @@ A comprehensive full-stack fitness application with AI-powered workout logging, 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/fitness-accountability-bot.git
+git clone https://github.com/Reachout-git-sk/fitness-accountability-bot.git
 cd fitness-accountability-bot
 ```
